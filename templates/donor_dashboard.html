@@ -1,0 +1,337 @@
+{% extends 'base.html' %}
+
+{% block title %}Donor Dashboard - CareConnect{% endblock %}
+
+{% block extra_css %}
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes modalOpen {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    .slide-up { animation: slideInUp 0.6s ease-out; }
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        animation: modalOpen 0.3s ease-out;
+    }
+
+    .form-input, .form-select {
+        border: 2px solid #e5e7eb;
+        padding: 12px 16px;
+        border-radius: 8px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: var(--primary-blue);
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    tr:hover {
+        background: #f9fafb;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Welcome Section -->
+    <div class="fade-in mb-8">
+        <h1 class="text-4xl font-bold text-blue-900 mb-2">Donor Dashboard</h1>
+        <p class="text-gray-600">Thank you for your generosity and support!</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid md:grid-cols-3 gap-6 mb-8">
+        <div class="stat-card slide-up">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-semibold mb-1">Total Donations</p>
+                    <h3 class="text-3xl font-bold text-blue-900">Rs {{ "%.2f"|format(total_amount) }}</h3>
+                </div>
+                <div class="bg-blue-100 p-4 rounded-full">
+                    <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up delay-100">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-semibold mb-1">Number of Donations</p>
+                    <h3 class="text-3xl font-bold text-blue-900">{{ donations|length }}</h3>
+                </div>
+                <div class="bg-green-100 p-4 rounded-full">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card slide-up delay-200">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-semibold mb-1">Last Donation</p>
+                    <h3 class="text-xl font-bold text-blue-900">
+                        {% if donations %}
+                            {{ donations[-1].date.strftime('%b %d, %Y') }}
+                        {% else %}
+                            No donations yet
+                        {% endif %}
+                    </h3>
+                </div>
+                <div class="bg-purple-100 p-4 rounded-full">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donate Button -->
+    <div class="mb-8 slide-up delay-300">
+        <button onclick="openDonationModal()" class="btn-primary text-lg">
+            <span class="flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Make a Donation
+            </span>
+        </button>
+    </div>
+
+    <!-- Donation History -->
+    <div class="bg-white rounded-lg shadow-lg p-6 slide-up delay-300">
+        <h2 class="text-2xl font-bold text-blue-900 mb-6">Donation History</h2>
+        <div class="overflow-x-auto">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Amount</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if donations %}
+                        {% for donation in donations %}
+                        <tr>
+                            <td>{{ donation.date.strftime('%b %d, %Y') }}</td>
+                            <td class="font-semibold text-blue-900">Rs {{ "%.2f"|format(donation.amount) }}</td>
+                            <td>{{ donation.payment_method }}</td>
+                            <td><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">{{ donation.status }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-gray-500 py-8">No donations yet. Make your first donation!</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Donation Modal -->
+<div id="donationModal" class="modal">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-blue-900">Make a Donation</h2>
+            <button onclick="closeDonationModal()" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <form id="donationForm" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Full Name</label>
+                <input type="text" name="donor_name" class="form-input" value="{{ current_user.full_name }}" required>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Email</label>
+                <input type="email" name="email" class="form-input" value="{{ current_user.email }}" required>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Phone Number</label>
+                <input type="tel" name="phone" class="form-input" value="{{ current_user.phone }}" required>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">CNIC Number</label>
+                <input type="text" name="cnic" class="form-input" placeholder="12345-1234567-1" required>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Donation Amount (Rs)</label>
+                <input type="number" name="amount" class="form-input" placeholder="1000" min="100" required>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Payment Method</label>
+                <select name="payment_method" class="form-select" required>
+                    <option value="">Select payment method</option>
+                    <option value="Easypaisa">Easypaisa</option>
+                    <option value="Bank Account">Bank Account</option>
+                    <option value="PayPal">PayPal</option>
+                    <option value="Cash">Cash</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-primary w-full">Submit Donation</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openDonationModal() {
+        document.getElementById('donationModal').classList.add('active');
+    }
+
+    function closeDonationModal() {
+        document.getElementById('donationModal').classList.remove('active');
+    }
+
+    // Close modal on outside click
+    document.getElementById('donationModal').addEventListener('click', (e) => {
+        if (e.target.id === 'donationModal') {
+            closeDonationModal();
+        }
+    });
+
+    // Form submission with better error handling
+    document.getElementById('donationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        
+        // Add loading state
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+        
+        try {
+            const response = await fetch('{{ url_for("submit_donation") }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert('Thank you for your donation! Your contribution will make a difference.');
+                closeDonationModal();
+                e.target.reset();
+                window.location.reload();
+            } else {
+                alert('Error: ' + (result.message || 'Something went wrong'));
+            }
+        } catch (error) {
+            alert('An error occurred. Please try again. Error: ' + error.message);
+            console.error('Donation error:', error);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
+</script>
+{% endblock %}

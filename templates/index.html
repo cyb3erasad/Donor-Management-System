@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - CareConnect{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-gradient text-white py-20 animate-fadeIn">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="animate-fadeInUp">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                    Empowering Lives Through <span class="text-blue-300">Compassion</span>
+                </h1>
+                <p class="text-xl mb-8 text-blue-100 animate-fadeInUp delay-100">
+                    Join us in making a difference in the lives of senior citizens and special persons. Together, we build a caring community.
+                </p>
+                <div class="flex flex-wrap gap-4 animate-fadeInUp delay-200">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('donor_dashboard') }}" class="btn-primary bg-white text-blue-900 hover:bg-blue-50">Go to Dashboard</a>
+                    {% else %}
+                        <a href="{{ url_for('signup') }}" class="btn-primary bg-white text-blue-900 hover:bg-blue-50">Donate Now</a>
+                        <a href="{{ url_for('signup') }}" class="btn-secondary">Join Us</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="animate-fadeInUp delay-300">
+                <img src="https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=800&q=80" 
+                     alt="Helping Seniors" 
+                     class="rounded-lg shadow-2xl w-full">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about" class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="scroll-animate">
+                <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=800&q=80" 
+                     alt="Community Support" 
+                     class="rounded-lg shadow-xl w-full">
+            </div>
+            <div class="scroll-animate">
+                <h2 class="text-4xl font-bold text-blue-900 mb-6">About Our Mission</h2>
+                <p class="text-gray-700 text-lg mb-4 leading-relaxed">
+                    We are dedicated to providing comprehensive support and care for senior citizens and special persons in our community. Through transparent donation management and dedicated services, we ensure every contribution makes a real impact.
+                </p>
+                <p class="text-gray-700 text-lg mb-6 leading-relaxed">
+                    Our platform connects generous donors with those in need, creating a bridge of compassion and support that transforms lives every day.
+                </p>
+                <ul class="space-y-3">
+                    <li class="flex items-center text-gray-700">
+                        <svg class="w-6 h-6 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        100% Transparent Donations
+                    </li>
+                    <li class="flex items-center text-gray-700">
+                        <svg class="w-6 h-6 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Direct Impact on Lives
+                    </li>
+                    <li class="flex items-center text-gray-700">
+                        <svg class="w-6 h-6 text-blue-600 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        Community-Driven Support
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="py-20 bg-blue-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16 scroll-animate">
+            <h2 class="text-4xl font-bold text-blue-900 mb-4">Our Services</h2>
+            <p class="text-gray-600 text-lg">Comprehensive care and support for our community</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="card scroll-animate">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-blue-900 mb-3">Donation Management</h3>
+                    <p class="text-gray-600">
+                        Secure and transparent donation processing with multiple payment options for your convenience.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card scroll-animate delay-100">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-blue-900 mb-3">Senior Citizen Support</h3>
+                    <p class="text-gray-600">
+                        Dedicated assistance and resources for senior citizens to live with dignity and care.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card scroll-animate delay-200">
+                <div class="text-center">
+                    <div class="bg-blue-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-blue-900 mb-3">Transparency & Trust</h3>
+                    <p class="text-gray-600">
+                        Complete visibility of fund allocation and impact, building trust through accountability.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="hero-gradient text-white py-20">
+    <div class="container mx-auto px-4 text-center scroll-animate">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">Ready to Make a Difference?</h2>
+        <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+            Your contribution can change lives. Join our community of compassionate individuals today.
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('donor_dashboard') }}" class="btn-primary bg-white text-blue-900 hover:bg-blue-50">Go to Dashboard</a>
+            {% else %}
+                <a href="{{ url_for('signup') }}" class="btn-primary bg-white text-blue-900 hover:bg-blue-50">Start Donating</a>
+                <a href="{{ url_for('signup') }}" class="btn-secondary">Register Now</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% block extra_css%}
+<style>
+.hero-gradient {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, #2563eb 100%);
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--primary-blue);
+    border: 2px solid var(--primary-blue);
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-blue);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(30, 58, 138, 0.3);
+}
+
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.scroll-animate.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Scroll Animation
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.scroll-animate').forEach(el => {
+        observer.observe(el);
+    });
+</script>
+{% endblock %}
+{% endblock %}
