@@ -227,7 +227,13 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
-                Donations
+                Donations Received
+            </div>
+            <div class="sidebar-link" onclick="showTab('giveDonations')">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
+                </svg>
+                Give Donations
             </div>
         </div>
     </div>
@@ -510,11 +516,11 @@
 
         <!-- Donations Tab -->
         <div id="donations" class="tab-content">
-            <h1 class="text-4xl font-bold text-blue-900 mb-2">Donations History</h1>
-            <p class="text-gray-600 mb-8">Track all donations</p>
+            <h1 class="text-4xl font-bold text-blue-900 mb-2">Donations From Donors</h1>
+            <p class="text-gray-600 mb-8">Track all donations received from donors</p>
 
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <h2 class="text-2xl font-bold text-blue-900 mb-6">All Donations</h2>
+                <h2 class="text-2xl font-bold text-blue-900 mb-6">All Donations Received</h2>
                 <div class="overflow-x-auto">
                     <table>
                         <thead>
@@ -542,6 +548,87 @@
                             {% else %}
                                 <tr>
                                     <td colspan="6" class="text-center text-gray-500 py-8">No donations yet</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Give Donations Tab -->
+        <div id="giveDonations" class="tab-content">
+            <h1 class="text-4xl font-bold text-blue-900 mb-2">Give Donations</h1>
+            <p class="text-gray-600 mb-8">Distribute donations to senior citizens and special peoples</p>
+
+            <div class="grid md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-blue-900 mb-4">Senior Citizens</h3>
+                    <div class="space-y-2 max-h-96 overflow-y-auto">
+                        {% for senior in senior_citizens %}
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition">
+                            <div>
+                                <p class="font-semibold">{{ senior.name }}</p>
+                                <p class="text-sm text-gray-600">{{ senior.email }}</p>
+                            </div>
+                            <button onclick="openGiveDonationModal({{ senior.id }}, '{{ senior.name }}', '{{ senior.email }}', 'senior')" class="btn-primary text-sm">
+                                Give
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-blue-900 mb-4">Special Peoples</h3>
+                    <div class="space-y-2 max-h-96 overflow-y-auto">
+                        {% for special in special_people %}
+                        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition">
+                            <div>
+                                <p class="font-semibold">{{ special.name }}</p>
+                                <p class="text-sm text-gray-600">{{ special.email }}</p>
+                            </div>
+                            <button onclick="openGiveDonationModal({{ special.id }}, '{{ special.name }}', '{{ special.email }}', 'special')" class="btn-primary text-sm">
+                                Give
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Given Donations History -->
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-2xl font-bold text-blue-900 mb-6">Donations Given History</h2>
+                <div class="overflow-x-auto">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Recipient</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Purpose</th>
+                                <th>Notes</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if all_received_donations %}
+                                {% for donation in all_received_donations %}
+                                <tr>
+                                    <td class="font-semibold">{{ donation.recipient_name }}</td>
+                                    <td><span class="badge badge-warning">{{ donation.recipient_type|title }}</span></td>
+                                    <td class="text-green-700 font-bold">Rs {{ "{:,.2f}".format(donation.amount) }}</td>
+                                    <td><span class="badge badge-info">{{ donation.purpose }}</span></td>
+                                    <td>{{ donation.notes if donation.notes else '-' }}</td>
+                                    <td>{{ donation.date.strftime('%b %d, %Y') }}</td>
+                                    <td><span class="badge badge-success">{{ donation.status }}</span></td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-gray-500 py-8">No donations given yet</td>
                                 </tr>
                             {% endif %}
                         </tbody>
@@ -674,6 +761,60 @@
                 <input type="text" name="preferred_time" class="form-input" placeholder="e.g., First week of month" required>
             </div>
             <button type="submit" class="btn-primary w-full">Add Donor</button>
+        </form>
+    </div>
+</div>
+
+<!-- Give Donation Modal -->
+<div id="giveDonationModal" class="modal">
+    <div class="modal-content">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-blue-900">Give Donation</h2>
+            <button onclick="closeModal('giveDonationModal')" class="text-gray-500 hover:text-gray-700">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <form id="giveDonationForm" class="space-y-4">
+            <input type="hidden" name="recipient_id" id="recipientId">
+            <input type="hidden" name="recipient_type" id="recipientType">
+            
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Recipient Name</label>
+                <input type="text" name="recipient_name" id="recipientName" class="form-input bg-gray-100" readonly>
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Recipient Email</label>
+                <input type="email" name="recipient_email" id="recipientEmail" class="form-input bg-gray-100" readonly>
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Amount (Rs) *</label>
+                <input type="number" name="amount" class="form-input" placeholder="Enter amount" min="100" required>
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Purpose *</label>
+                <select name="purpose" class="form-select" required>
+                    <option value="">Select purpose</option>
+                    <option value="Medical Support">Medical Support</option>
+                    <option value="Food & Nutrition">Food & Nutrition</option>
+                    <option value="Education">Education</option>
+                    <option value="Housing">Housing</option>
+                    <option value="Emergency Aid">Emergency Aid</option>
+                    <option value="Monthly Support">Monthly Support</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-gray-700 font-semibold mb-2">Notes (Optional)</label>
+                <textarea name="notes" class="form-input" rows="3" placeholder="Add any additional notes"></textarea>
+            </div>
+            
+            <button type="submit" class="btn-primary w-full">Give Donation</button>
         </form>
     </div>
 </div>
@@ -924,5 +1065,54 @@
             console.error('Error:', error);
         }
     }
+
+    // Open Give Donation Modal
+    function openGiveDonationModal(recipientId, recipientName, recipientEmail, recipientType) {
+        document.getElementById('recipientId').value = recipientId;
+        document.getElementById('recipientName').value = recipientName;
+        document.getElementById('recipientEmail').value = recipientEmail;
+        document.getElementById('recipientType').value = recipientType;
+        openModal('giveDonationModal');
+    }
+
+    // Give Donation Form Submission
+    document.getElementById('giveDonationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(e.target);
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+        
+        try {
+            const response = await fetch('{{ url_for("give_donation") }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                alert(result.message);
+                closeModal('giveDonationModal');
+                e.target.reset();
+                window.location.reload();
+            } else {
+                alert('Error: ' + (result.message || 'Something went wrong'));
+            }
+        } catch (error) {
+            alert('An error occurred. Please try again. Error: ' + error.message);
+            console.error('Error:', error);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    });
 </script>
 {% endblock %}

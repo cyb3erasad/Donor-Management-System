@@ -67,6 +67,19 @@ class Donation(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)
     status = db.Column(db.String(20), default='Completed')
 
+class ReceivedDonation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    recipient_id = db.Column(db.Integer, nullable=False)  # User ID of senior/special person
+    recipient_name = db.Column(db.String(100), nullable=False)
+    recipient_email = db.Column(db.String(100), nullable=False)
+    recipient_type = db.Column(db.String(50), nullable=False)  # 'senior' or 'special'
+    amount = db.Column(db.Float, nullable=False)
+    purpose = db.Column(db.String(200), nullable=False)  # Medical, Food, Education, etc.
+    notes = db.Column(db.Text)
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+    given_by = db.Column(db.String(100), default='Admin')
+    status = db.Column(db.String(20), default='Completed')
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -183,7 +196,13 @@ def senior_dashboard():
     if current_user.category not in ['senior', 'special']:
         return redirect(url_for('dashboard_redirect'))
     
-    return render_template('senior_dashboard.html')
+    # Get received donations for this user
+    received_donations = ReceivedDonation.query.filter_by(recipient_id=current_user.id).order_by(ReceivedDonation.date.desc()).all()
+    total_received = sum(d.amount for d in received_donations)
+    
+    return render_template('senior_dashboard.html', 
+                         received_donations=received_donations,
+                         total_received=total_received)
 
 @app.route('/admin-dashboard')
 @login_required
@@ -298,6 +317,9 @@ def admin_dashboard():
     # Get all donations
     all_donations = Donation.query.all()
     
+    # Get all received donations
+    all_received_donations = ReceivedDonation.query.order_by(ReceivedDonation.date.desc()).all()
+    
     # Calculate statistics
     total_users = len(all_users)
     total_donations = sum(d.amount for d in all_donations)
@@ -312,7 +334,8 @@ def admin_dashboard():
                          senior_citizens=combined_seniors,
                          special_people=combined_special,
                          donors=combined_donors,
-                         all_donations=all_donations)
+                         all_donations=all_donations,
+                         all_received_donations=all_received_donations)
 
 @app.route('/admin/add-senior', methods=['POST'])
 @login_required
@@ -407,6 +430,28 @@ def delete_donor(id):
     db.session.commit()
     
     return jsonify({'success': True, 'message': 'Donor deleted'})
+
+@app.route('/admin/give-donation', methods=['POST'])
+@login_required
+def give_donation():
+    if current_user.category != 'admin':
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 403
+    
+    received_donation = ReceivedDonation(
+        recipient_id=int(request.form.get('recipient_id')),
+        recipient_name=request.form.get('recipient_name'),
+        recipient_email=request.form.get('recipient_email'),
+        recipient_type=request.form.get('recipient_type'),
+        amount=float(request.form.get('amount')),
+        purpose=request.form.get('purpose'),
+        notes=request.form.get('notes', ''),
+        given_by='Admin - ' + current_user.full_name
+    )
+    
+    db.session.add(received_donation)
+    db.session.commit()
+    
+    return jsonify({'success': True, 'message': 'Donation given successfully'})
 
 @app.route('/logout')
 @login_required
