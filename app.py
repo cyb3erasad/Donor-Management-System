@@ -322,13 +322,17 @@ def admin_dashboard():
     
     # Calculate statistics
     total_users = len(all_users)
-    total_donations = sum(d.amount for d in all_donations)
+    total_donations_received = sum(d.amount for d in all_donations)
+    total_donations_given = sum(d.amount for d in all_received_donations)
+    remaining_balance = total_donations_received - total_donations_given
     total_seniors = len(combined_seniors)
     total_donors = len(combined_donors)
     
     return render_template('admin_dashboard.html',
                          total_users=total_users,
-                         total_donations=total_donations,
+                         total_donations_received=total_donations_received,
+                         total_donations_given=total_donations_given,
+                         remaining_balance=remaining_balance,
                          total_seniors=total_seniors,
                          total_donors=total_donors,
                          senior_citizens=combined_seniors,
